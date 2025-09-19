@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES6",
+    "experimentalDecorators": true, // <-- Add this line
+    "emitDecoratorMetadata": true,  // <-- Add this line
+    "strict": true,
+    "esModuleInterop": true,
+    "outDir": "out"
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
