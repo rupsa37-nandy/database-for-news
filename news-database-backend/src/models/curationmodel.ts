@@ -9,7 +9,9 @@ const SectionSchema = new mongoose.Schema({
 // Main schema
 const CurationSchema = new mongoose.Schema({
     cid: { type: Number, required: true, unique: true }, // unique id for curated news
-    news_reports: { type: [String], required: true},
+    query: { type: String, required: true},
+    category: { type: String, required: true},
+    //news_reports: { type: [String], required: true},
     title: { type: String, required: true },
     introduction: { type: String, required: true },
     body: { type: [SectionSchema], required: true }, // array of sections
