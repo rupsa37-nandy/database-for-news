@@ -6,12 +6,7 @@ const SectionSchema = new mongoose.Schema({
   body: { type: String, required: true },
 });
 
-// Main schema
-const CurationSchema = new mongoose.Schema({
-    cid: { type: Number, required: true, unique: true }, // unique id for curated news
-    query: { type: String, required: true},
-    category: { type: String, required: true},
-    //news_reports: { type: [String], required: true},
+const CuratedNewsSchema = new mongoose.Schema({
     title: { type: String, required: true },
     introduction: { type: String, required: true },
     body: { type: [SectionSchema], required: true }, // array of sections
@@ -20,6 +15,14 @@ const CurationSchema = new mongoose.Schema({
   { timestamps: true } //automatically adds two fields to your documents(Curation): createdAt and updatedAt
 );
 
+const CurationSchema = new mongoose.Schema(
+  {
+    cid: { type: Number, required: true, unique: true }, // unique id for curated news
+    query: { type: String, required: true},
+    category: { type: String, required: true},
+    curated_news: CuratedNewsSchema,
+  }
+)
 // Compiles the CurationSchema into a Model
 const Curation = mongoose.model("Curation", CurationSchema);
 
