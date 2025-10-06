@@ -1,24 +1,26 @@
 import { Request, Response } from "express";
-import * as translationService from "../service/curationService";
+import * as translationService from "../service/translationService";
 
 export const translationNews = async (req: Request, res: Response) => {
     try {
-        const { src_lang, tgt_lang, text } = req.body;
+      
+        const { src_lang, tgt_lang, text, bengali_translation, hindi_translation } = req.body;
 
-        // 1.Check whether it exists or not
-        if(!src_lang || !tgt_lang || !text) {
+        // 1. Check for mandatory core fields
+        if(!src_lang || !tgt_lang || !text) { 
             return res.status(400).json({
                 success: false,
-                message: "Missing required fields in the request body.",
+                message: "Missing required fields.",
             })
         }
 
-        // 2.If exixts, call the service & save the translated news
+        // 2. Call the service & save the translated news
         const saveNews = await translationService.save({ 
-            //translations: text 
             src_lang,
             tgt_lang,
-            text,
+            text, 
+            bengali_translation,
+            hindi_translation,
         });
         
         // 3. Send the response
@@ -28,11 +30,10 @@ export const translationNews = async (req: Request, res: Response) => {
             data: saveNews,
         })
     } catch (error: any) {
-        console.error("Error saving curated news:", error);
+        console.log("Error saving translated news:", error);
         res.status(500).json({
-      success: false,
-      message: "Failed to save translated news.",
-    });
-        
+          success: false,
+          message: error.message || "Failed to save translated news.", 
+        });
     }
 }
