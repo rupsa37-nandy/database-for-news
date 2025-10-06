@@ -14,7 +14,12 @@ export const translationNews = async (req: Request, res: Response) => {
         }
 
         // 2.If exixts, call the service & save the translated news
-        const saveNews = await translationService.save({ translations: text });
+        const saveNews = await translationService.save({ 
+            //translations: text 
+            src_lang,
+            tgt_lang,
+            text,
+        });
         
         // 3. Send the response
         res.status(201).json({
