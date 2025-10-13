@@ -7,18 +7,26 @@ export const translationNews = async (req: Request, res: Response) => {
         const { editedNews, hiTranslation, benTranslation } = req.body;
 
         // 1. Check for mandatory core fields
-        if(!editedNews || !hiTranslation || !benTranslation) { 
+        if(!editedNews) { 
             return res.status(400).json({
                 success: false,
-                message: "Missing required fields.",
+                message: "Missing 'editedNews' fields.",
             })
+        }
+
+        // At least one translation must exist
+        if (!hiTranslation && !benTranslation) {
+        return res.status(400).json({
+            success: false,
+            message: "At least one translation ('hiTranslation' or 'benTranslation') must be provided.",
+        });
         }
 
         // 2. Call the service & save the translated news
         const saveNews = await translationService.save({ 
-            editedNews, 
-            hiTranslation,
-            benTranslation,
+            editedNews,
+            hiTranslation: hiTranslation || null,
+            benTranslation: benTranslation || null,
         });
         
         // 3. Send the response
