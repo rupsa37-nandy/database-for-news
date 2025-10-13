@@ -4,10 +4,10 @@ import * as translationService from "../service/translationService";
 export const translationNews = async (req: Request, res: Response) => {
     try {
       
-        const { src_lang, tgt_lang, text, bengali_translation, hindi_translation } = req.body;
+        const { editedNews, hiTranslation, benTranslation } = req.body;
 
         // 1. Check for mandatory core fields
-        if(!src_lang || !tgt_lang || !text) { 
+        if(!editedNews || !hiTranslation || !benTranslation) { 
             return res.status(400).json({
                 success: false,
                 message: "Missing required fields.",
@@ -16,11 +16,9 @@ export const translationNews = async (req: Request, res: Response) => {
 
         // 2. Call the service & save the translated news
         const saveNews = await translationService.save({ 
-            src_lang,
-            tgt_lang,
-            text, 
-            bengali_translation,
-            hindi_translation,
+            editedNews, 
+            hiTranslation,
+            benTranslation,
         });
         
         // 3. Send the response
