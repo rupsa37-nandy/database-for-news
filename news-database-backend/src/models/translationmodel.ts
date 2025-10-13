@@ -6,7 +6,7 @@ const SectionSchema = new mongoose.Schema({
   body: { type: String, required: true },
 });
 
-// CuratedNews schema for each translated article
+// Schema for each translated article
 const News = new mongoose.Schema({
   title: { type: String, required: true },
   introduction: { type: String, required: true },

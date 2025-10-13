@@ -35,3 +35,4 @@ export const translationNews = async (req: Request, res: Response) => {
         });
     }
 }
+
