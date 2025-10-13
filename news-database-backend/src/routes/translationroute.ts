@@ -4,6 +4,6 @@ import { translationNews } from "../controller/translationController";
 const translationRouter = Router();
 
 // Route to save the translated news
-translationRouter.post("/translate_news", translationNews); 
+translationRouter.post("/saveTranslateNews", translationNews); 
 
 export default translationRouter;
