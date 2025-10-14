@@ -18,10 +18,6 @@ const News = new mongoose.Schema({
 const TranslationSchema = new mongoose.Schema(
   {
     tid: { type: Number, required: true, unique: true },
-    // src_lang: { type: String, required: true },
-    // tgt_lang: { type: String, required: true },
-    //editedNews: { type: String, required: true }, // original text
-
     // store the full translation object for each language
     editedNews: { type: News, required: false },
     hiTranslation: { type: News, required: false },
