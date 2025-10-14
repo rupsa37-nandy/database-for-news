@@ -15,8 +15,15 @@ export const save = async (data: any) => {
 
     // 1. Generate a new, unique cid.
     // This is a robust way to generate a unique, incremental ID.
-    const count = await Translation.countDocuments();
-    const tid = count + 1;
+    // const count = await Translation.countDocuments();
+    // const tid = count + 1;
+    // console.log(tid);
+
+     // 1.Retrieve the latest translation sorted by tid (descending)
+    const lastTranslation = await Translation.findOne().sort({ tid: -1 });
+
+    // 2.Determine the next tid
+    const tid = lastTranslation ? lastTranslation.tid + 1 : 1;
 
     const newTranslation = new Translation({
       tid,
@@ -25,6 +32,7 @@ export const save = async (data: any) => {
       hiTranslation: hiTranslation || null,  // missing value becomes null
       benTranslation: benTranslation || null,
     });
+    console.log(newTranslation);
 
     const saved = await newTranslation.save();
     return saved;
