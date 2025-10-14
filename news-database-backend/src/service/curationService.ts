@@ -3,25 +3,22 @@ import Curation from "../models/curationmodel";
 // Save curated news
 export const save = async (data: any) => {
   try {
-    // 1. Generate a new, unique cid.
-    // This is a robust way to generate a unique, incremental ID.
-    const count = await Curation.countDocuments();
-    const cid = count + 1;
-
-    // 2. Check for required fields based on your schema
-    if (!data.query || !data.category) {
+  
+    // 1. Check for required fields based on your schema
+    if (!data.id || !data.query || !data.category) {
         throw new Error("Missing required fields: 'query' and 'category'.");
     }
 
-    // 3. Create a new document with the correct fields
+    // 2. Create a new document with the correct fields
     const newCuration = new Curation({
-      cid,
+      id: data.id,
       query: data.query,
       category: data.category,
       curated_news: data.curated_news
     });
-
-    // 4. Save the new document to the database
+    console.log(newCuration);
+    
+    // 3. Save the new document to the database
     return await newCuration.save();
   } catch (error: any) {
     console.log("Error in curationService.save:", error);

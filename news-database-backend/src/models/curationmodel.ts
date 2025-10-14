@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Any } from "typeorm";
 
 // Section schema (subdocument/nested json)
 const SectionSchema = new mongoose.Schema({
@@ -17,7 +18,7 @@ const CuratedNewsSchema = new mongoose.Schema({
 
 const CurationSchema = new mongoose.Schema(
   {
-    cid: { type: Number, required: true, unique: true }, // unique id for curated news
+    id: { type: String, required: true, unique: true }, // unique id for curated news
     query: { type: String, required: true},
     category: { type: String, required: true},
     curated_news: CuratedNewsSchema,
