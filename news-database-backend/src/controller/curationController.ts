@@ -30,3 +30,35 @@ export const saveCuratedNews = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const updateFromDocument = async (req: Request, res: Response) => {
+  try {
+    const fullDocument = req.body;
+    const cid = fullDocument.cid;
+    const editedData = fullDocument.edited_news;
+
+    //Validate that the necessary parts exist
+    if (!cid) {
+      return res.status(400).json({ success: false, message: "The provided document is missing a 'cid'." });
+    }
+    if (!editedData) {
+      return res.status(400).json({ success: false, message: "The provided document is missing the 'edited_news' field." });
+    }
+
+    const updatedDocument = await cserv.saveEditedNews(cid, editedData);
+
+    //Handle the response
+    if (!updatedDocument) {
+      return res.status(404).json({ success: false, message: `Curation with ID ${cid} not found.` });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Edited news saved successfully from the document!",
+      data: updatedDocument,
+    });
+  } catch (error: any) {
+    console.error("Error in updateFromDocument controller:", error);
+    res.status(500).json({ success: false, message: "Failed to save edited news." });
+  }
+};

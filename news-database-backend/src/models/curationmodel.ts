@@ -15,12 +15,14 @@ const CuratedNewsSchema = new mongoose.Schema({
   { timestamps: true } //automatically adds two fields to your documents(Curation): createdAt and updatedAt
 );
 
+
 const CurationSchema = new mongoose.Schema(
   {
     cid: { type: Number, required: true, unique: true }, // unique id for curated news
     query: { type: String, required: true},
     category: { type: String, required: true},
     curated_news: CuratedNewsSchema,
+    edited_news: CuratedNewsSchema, //optional
   }
 )
 // Compiles the CurationSchema into a Model
