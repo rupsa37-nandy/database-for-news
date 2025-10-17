@@ -16,7 +16,7 @@ export const save = async (data: any) => {
       category: data.category,
       curated_news: data.curated_news
     });
-    console.log(newCuration);
+    console.log("service \n", newCuration);
     
     // 3. Save the new document to the database
     return await newCuration.save();
@@ -25,16 +25,22 @@ export const save = async (data: any) => {
   }
 };
 
-export const saveEditedNews = async (cid: number, editedData: any) => {
+export const updateEditedNewsById = async (id: string, edited_news: string) => {
   try {
-    const updatedCuration = await Curation.findOneAndUpdate(
-      { cid: cid },
-      { $set: { edited_news: editedData } },
-      { new: true, runValidators: true }
+    const updatedDoc = await Curation.findOneAndUpdate(
+      { id: id },                     // match by your unique field name
+      { edited_news },                  // set the updated field
+      {
+        new: true,                     // return the updated document
+        upsert: true,                  // create if not found
+        setDefaultsOnInsert: true      // apply schema defaults when inserting
+      }
     );
-    return updatedCuration;
+
+    return await updatedDoc.save();
+  
   } catch (error: any) {
-    console.error("Error in saveEditedNews service:", error.message);
-    throw new Error("Failed to save the edited curation.");
+    console.error("Service error:", error);
+    throw error;
   }
 };

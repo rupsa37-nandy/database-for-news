@@ -3,6 +3,7 @@ import express from "express";
 import cors from 'cors';
 import curationRouter from "./routes/curationroute";
 import translationRouter from "./routes/translationroute";
+import uploadRouter from "./routes/imgUploadroute";
 
 const apps = express();
 
@@ -12,6 +13,9 @@ apps.use(express.json());
 // Enable CORS for all origins
 apps.use(cors());
 
-apps.use('/curation', curationRouter, translationRouter);
+// Serve uploaded images statically
+apps.use("/uploads", express.static("uploads"));
+
+apps.use('/curation', curationRouter, translationRouter, uploadRouter);
 
 export default apps;

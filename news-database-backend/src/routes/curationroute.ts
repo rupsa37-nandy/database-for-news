@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { saveCuratedNews,updateFromDocument } from "../controller/curationController";
+import { saveCuratedNews,updateEditedNews } from "../controller/curationController";
 
 const curationRouter = Router();
 
@@ -7,6 +7,6 @@ const curationRouter = Router();
 curationRouter.post("/save_curated_news", saveCuratedNews);
 
 //Route to save the edited curated news
-curationRouter.put('/update', updateFromDocument);
+curationRouter.put('/update_edited_news', updateEditedNews);
 
 export default curationRouter;

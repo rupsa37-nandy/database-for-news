@@ -43,34 +43,70 @@ export const saveCuratedNews = async (req: Request, res: Response) => {
   }
 };
 
-export const updateFromDocument = async (req: Request, res: Response) => {
+export const updateEditedNews = async (req: Request, res: Response) => {
   try {
-    const fullDocument = req.body;
-    const cid = fullDocument.cid;
-    const editedData = fullDocument.edited_news;
+    const { id, edited_news } = req.body;
 
-    //Validate that the necessary parts exist
-    if (!cid) {
-      return res.status(400).json({ success: false, message: "The provided document is missing a 'cid'." });
-    }
-    if (!editedData) {
-      return res.status(400).json({ success: false, message: "The provided document is missing the 'edited_news' field." });
+    // 1. Validate input
+    if (!id || !edited_news) {
+      return res.status(400).json({
+        success: false,
+        message: "Both 'id' and 'editedNews' are required.",
+      });
     }
 
-    const updatedDocument = await cserv.saveEditedNews(cid, editedData);
+    // 2. Call service
+    const updatedNews = await cserv.updateEditedNewsById(id, edited_news);
+    console.log("edited news \n", updatedNews);
 
-    //Handle the response
-    if (!updatedDocument) {
-      return res.status(404).json({ success: false, message: `Curation with ID ${cid} not found.` });
+    // 3. Handle not found
+    if (!updatedNews) {
+      return res.status(404).json({
+        success: false,
+        message: `No record found with id: ${id}`,
+      });
     }
 
-    res.status(200).json({
+    // 4. Return success
+    return res.status(200).json({
       success: true,
-      message: "Edited news saved successfully from the document!",
-      data: updatedDocument,
+      message: "Edited news updated successfully.",
+      data: updatedNews,
     });
   } catch (error: any) {
-    console.error("Error in updateFromDocument controller:", error);
-    res.status(500).json({ success: false, message: "Failed to save edited news." });
+    console.error("Error updating edited news:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while updating news.",
+      error: error.message,
+    });
   }
 };
+/*
+export const updateEditedNews = async (req: Request, res: Response) => {
+  try {
+    const { id, editedNews } = req.body;
+
+    if (!id || !editedNews) {
+      return res.status(400).json({
+        success: false,
+        message: "Both 'id' and 'editedNews' are required.",
+      });
+    }
+
+    const updatedCuration = await curationService.updateEditedNewsById(id, editedNews);
+
+    return res.status(200).json({
+      success: true,
+      message: "Edited news updated or created successfully.",
+      data: updatedCuration,
+    });
+  } catch (error: any) {
+    console.error("Error in controller:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while updating or saving news.",
+      error: error.message,
+    });
+  }
+}; */
