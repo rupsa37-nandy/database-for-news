@@ -3,10 +3,10 @@ import Curation from "../models/curationmodel";
 // Save curated news
 export const save = async (data: any) => {
   try {
-  
+
     // 1. Check for required fields based on your schema
     if (!data.id || !data.query || !data.category) {
-        throw new Error("Missing required fields: 'query' and 'category'.");
+      throw new Error("Missing required fields: 'query' and 'category'.");
     }
 
     // 2. Create a new document with the correct fields
@@ -17,7 +17,7 @@ export const save = async (data: any) => {
       curated_news: data.curated_news
     });
     console.log("service \n", newCuration);
-    
+
     // 3. Save the new document to the database
     return await newCuration.save();
   } catch (error: any) {
@@ -27,6 +27,10 @@ export const save = async (data: any) => {
 
 export const updateEditedNewsById = async (id: string, edited_news: string) => {
   try {
+   // Find by ID first
+  const existing = await Curation.findOne({id});
+  if (!existing) return null; // UID does not exist
+
     const updatedDoc = await Curation.findOneAndUpdate(
       { id: id },                     // match by your unique field name
       { edited_news },                  // set the updated field
@@ -38,7 +42,7 @@ export const updateEditedNewsById = async (id: string, edited_news: string) => {
     );
 
     return await updatedDoc.save();
-  
+
   } catch (error: any) {
     console.error("Service error:", error);
     throw error;

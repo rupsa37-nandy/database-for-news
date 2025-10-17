@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as cserv from "../service/curationService";
 import Curation from "../models/curationmodel";
+import mongoose from "mongoose";
 
 export const saveCuratedNews = async (req: Request, res: Response) => {
   try {
@@ -47,66 +48,60 @@ export const updateEditedNews = async (req: Request, res: Response) => {
   try {
     const { id, edited_news } = req.body;
 
-    // 1. Validate input
+    // 1.UID missing
     if (!id || !edited_news) {
       return res.status(400).json({
         success: false,
-        message: "Both 'id' and 'editedNews' are required.",
+        message: "UID is missing in the request body.",
       });
     }
 
-    // 2. Call service
-    const updatedNews = await cserv.updateEditedNewsById(id, edited_news);
-    console.log("edited news \n", updatedNews);
-
-    // 3. Handle not found
-    if (!updatedNews) {
+    // 2.Invalid UID format (not a MongoDB ObjectId)
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(404).json({
         success: false,
-        message: `No record found with id: ${id}`,
+        message: "Invalid UID format & does not exist.",
       });
     }
 
-    // 4. Return success
+    // 3.Continue with your service logic(calling service) (since UID is valid)
+    const result = await cserv.updateEditedNewsById(id, edited_news );
+
+    //  4.If service returns null, it means UID not found
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid UID format & does not exist",
+      });
+    }
+
     return res.status(200).json({
       success: true,
-      message: "Edited news updated successfully.",
-      data: updatedNews,
+      message: "Edited news updated successfully",
+      data: result,
     });
+
   } catch (error: any) {
-    console.error("Error updating edited news:", error);
+    console.error("Service error:", error);
+
+    // Handle mongoose validation errors
+    if (error.name === "ValidationError") {
+      const validationErrors = Object.values(error.errors).map((err: any) => ({
+        field: err.path,
+        message: err.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: validationErrors,
+      });
+    }
+
+    // Other errors
     return res.status(500).json({
       success: false,
-      message: "Server error while updating news.",
-      error: error.message,
+      message: error.message || "An unexpected error occurred",
     });
   }
 };
-/*
-export const updateEditedNews = async (req: Request, res: Response) => {
-  try {
-    const { id, editedNews } = req.body;
-
-    if (!id || !editedNews) {
-      return res.status(400).json({
-        success: false,
-        message: "Both 'id' and 'editedNews' are required.",
-      });
-    }
-
-    const updatedCuration = await curationService.updateEditedNewsById(id, editedNews);
-
-    return res.status(200).json({
-      success: true,
-      message: "Edited news updated or created successfully.",
-      data: updatedCuration,
-    });
-  } catch (error: any) {
-    console.error("Error in controller:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error while updating or saving news.",
-      error: error.message,
-    });
-  }
-}; */
