@@ -20,6 +20,7 @@ const CuratedNewsSchema = new mongoose.Schema({
 const CurationSchema = new mongoose.Schema(
   {
     id: { type: String, required: true, unique: true }, // unique id for curated news
+    user_id: { type: String, required: true }, //
     query: { type: String, required: true},
     category: { type: String, required: true},
     curated_news: CuratedNewsSchema,

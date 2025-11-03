@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { saveCuratedNews, updateEditedNews } from "../controller/curationController";
+import { saveCuratedNews, updateEditedNews, getCuratedCountByUser } from "../controller/curationController";
 
 const curationRouter = Router();
 
@@ -131,5 +131,7 @@ curationRouter.post("/save_curated_news", saveCuratedNews);
  *         description: Internal server error
  */
 curationRouter.put("/update_edited_news", updateEditedNews);
+
+curationRouter.get("/curated_news_count", getCuratedCountByUser); // new route
 
 export default curationRouter;

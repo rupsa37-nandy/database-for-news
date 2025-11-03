@@ -5,27 +5,37 @@ import mongoose from "mongoose";
 
 export const saveCuratedNews = async (req: Request, res: Response) => {
   try {
-    const { id, query, category, curated_news } = req.body;
+    const { id, user_id, query, category, curated_news } = req.body;
 
-    // 1. Check whether it exists
-    if (!id || !query || !category || !curated_news) {
+    // Corrected validation logic: Checks if ANY of the required fields are missing/empty.
+    if (!id || !user_id || !query || !category || !curated_news) {
       return res.status(400).json({
         success: false,
         message: "Missing required fields in the request body.",
       });
     }
+    // Verify user exists from User Service
+    // Assuming your user service has an endpoint like GET http://user-service/api/users/:id
+    // try {
+    //   const response = await axios.get(`http://<USER_SERVICE_HOST>:<PORT>/api/users/${user_id}`);
+    //   if (!response.data) {
+    //     return res.status(404).json({ success: false, message: "User not found" });
+    //   }
+    // } catch {
+    //   return res.status(404).json({ success: false, message: "User not found or service unavailable" });
+    // }
 
      // 2. Check if a curation with the same id already exists
     const existing = await Curation.findOne({ id });
     if (existing) {
-      return res.status(409).json({
+      return res.status(404).json({
         success: false,
         message: `Curation with id ${id} already exists.`,
       });
     }
     
     // 3. If exists, call the service & save the curated news
-    const saveNews = await cserv.save({ id, query, category, curated_news });
+    const saveNews = await cserv.save({ id, user_id, query, category, curated_news });
     console.log("savedNews \n",saveNews);
     
     // 4. Send the response
@@ -102,6 +112,47 @@ export const updateEditedNews = async (req: Request, res: Response) => {
     return res.status(500).json({
       success: false,
       message: error.message || "An unexpected error occurred",
+    });
+  }
+};
+
+export const getCuratedCountByUser = async (req: Request, res: Response) => {
+  try {
+    const { user_id } = req.body;
+
+    // 1.if user_id exists
+    if (!user_id) {
+      return res.status(400).json({
+        success: false,
+        message: "user_id is missing in the request body.",
+      });
+    }
+
+    // 2.Call the service
+    const result = await cserv.getCuratedCountByUser(user_id);
+
+    // 3.If no curation exists for that user
+    if (result === 0) {
+      return res.status(404).json({
+        success: false,
+        message: `No curated news found for user_id: ${user_id}`,
+      });
+    }
+
+    // 4.Success
+    return res.status(200).json({
+      success: true,
+      data: {
+        user_id,
+        curated_news_count: result,
+      },
+    });
+
+  } catch (error: any) {
+    console.error("Error fetching curated news count:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch curated news count.",
     });
   }
 };
