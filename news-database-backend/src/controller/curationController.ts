@@ -14,18 +14,8 @@ export const saveCuratedNews = async (req: Request, res: Response) => {
         message: "Missing required fields in the request body.",
       });
     }
-    // Verify user exists from User Service
-    // Assuming your user service has an endpoint like GET http://user-service/api/users/:id
-    // try {
-    //   const response = await axios.get(`http://<USER_SERVICE_HOST>:<PORT>/api/users/${user_id}`);
-    //   if (!response.data) {
-    //     return res.status(404).json({ success: false, message: "User not found" });
-    //   }
-    // } catch {
-    //   return res.status(404).json({ success: false, message: "User not found or service unavailable" });
-    // }
 
-     // 2. Check if a curation with the same id already exists
+    // 2. Check if a curation with the same id already exists
     const existing = await Curation.findOne({ id });
     if (existing) {
       return res.status(404).json({
