@@ -110,7 +110,7 @@ export const getCuratedCountByUser = async (req: Request, res: Response) => {
   try {
     const { user_id } = req.body;
 
-    // 1.if user_id exists
+    // 1.Validate input
     if (!user_id) {
       return res.status(400).json({
         success: false,
@@ -119,22 +119,33 @@ export const getCuratedCountByUser = async (req: Request, res: Response) => {
     }
 
     // 2.Call the service
-    const result = await cserv.getCuratedCountByUser(user_id);
+    const curatedNewsList = await cserv.getCuratedCountByUser(user_id);
 
-    // 3.If no curation exists for that user
-    if (result === 0) {
+    // 3.Handle no data case
+    if (!curatedNewsList) {
       return res.status(404).json({
         success: false,
         message: `No curated news found for user_id: ${user_id}`,
       });
     }
 
-    // 4.Success
+    // 4.Build response
+    const curated_news_count = curatedNewsList.length;
+
+    // Optional: format to include only relevant fields
+    const curated_details = curatedNewsList.map((item: any) => ({
+      query: item.query,
+      category: item.category,
+      curated_news: item.curated_news,
+    }));
+
+    // 5.Send response
     return res.status(200).json({
       success: true,
       data: {
         user_id,
-        curated_news_count: result,
+        curated_news_count,
+        curated_details,
       },
     });
 
@@ -146,3 +157,44 @@ export const getCuratedCountByUser = async (req: Request, res: Response) => {
     });
   }
 };
+
+// export const getCuratedCountByUser = async (req: Request, res: Response) => {
+//   try {
+//     const { user_id } = req.body;
+
+//     // 1.if user_id exists
+//     if (!user_id) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "user_id is missing in the request body.",
+//       });
+//     }
+
+//     // 2.Call the service
+//     const result = await cserv.getCuratedCountByUser(user_id);
+
+//     // 3.If no curation exists for that user
+//     if (result === 0) {
+//       return res.status(404).json({
+//         success: false,
+//         message: `No curated news found for user_id: ${user_id}`,
+//       });
+//     }
+
+//     // 4.Success
+//     return res.status(200).json({
+//       success: true,
+//       data: {
+//         user_id,
+//         curated_news_count: result,
+//       },
+//     });
+
+//   } catch (error: any) {
+//     console.error("Error fetching curated news count:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to fetch curated news count.",
+//     });
+//   }
+// };

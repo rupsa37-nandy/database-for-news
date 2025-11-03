@@ -52,11 +52,29 @@ export const updateEditedNewsById = async (id: string, edited_news: string) => {
 
 export const getCuratedCountByUser = async (user_id: string) => {
   try {
-    // Count how many curations exist for this user_id
-    const count = await Curation.countDocuments({ user_id });
-    return count;
-  } catch (error: any) {
-    console.error("Error in getCuratedCountByUser service:", error);
+    // 1.Find all curated news by this user
+    const curatedNewsList = await Curation.find({ user_id });
+
+    // 2.If no curated news exists, return an empty array
+    if (!curatedNewsList || curatedNewsList.length === 0) {
+      return null;
+    }
+
+    // 3.Return the full records
+    return curatedNewsList;
+  } catch (error) {
+    console.error("Error in curationService.getCuratedCountByUser:", error);
     throw error;
   }
 };
+
+// export const getCuratedCountByUser = async (user_id: string) => {
+//   try {
+//     // Count how many curations exist for this user_id
+//     const count = await Curation.countDocuments({ user_id });
+//     return count;
+//   } catch (error: any) {
+//     console.error("Error in getCuratedCountByUser service:", error);
+//     throw error;
+//   }
+// };
