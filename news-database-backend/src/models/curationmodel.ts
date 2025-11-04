@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { Any } from "typeorm";
 
 // Section schema (subdocument/nested json)
 const SectionSchema = new mongoose.Schema({
