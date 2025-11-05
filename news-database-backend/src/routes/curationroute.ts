@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { saveCuratedNews, updateEditedNews, getCuratedCountByUser } from "../controller/curationController";
+import { saveCuratedNews, updateEditedNews, getCuratedCountByUser, getAllCurations } from "../controller/curationController";
 
 const curationRouter = Router();
 
@@ -132,6 +132,8 @@ curationRouter.post("/save_curated_news", saveCuratedNews);
  */
 curationRouter.put("/update_edited_news", updateEditedNews);
 
-curationRouter.get("/curated_news_count", getCuratedCountByUser); // new route
+curationRouter.get("/curated_news_count", getCuratedCountByUser); // 
+
+curationRouter.get("/all-curations", getAllCurations);
 
 export default curationRouter;

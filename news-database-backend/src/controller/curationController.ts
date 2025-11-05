@@ -158,43 +158,27 @@ export const getCuratedCountByUser = async (req: Request, res: Response) => {
   }
 };
 
-// export const getCuratedCountByUser = async (req: Request, res: Response) => {
-//   try {
-//     const { user_id } = req.body;
+// get all curations
+export const getAllCurations = async (req: Request, res: Response) => {
+  try {
+    const curations = await cserv.getAllCurations();
 
-//     // 1.if user_id exists
-//     if (!user_id) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "user_id is missing in the request body.",
-//       });
-//     }
+    if (!curations || curations.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No curations found in the database.",
+      });
+    }
 
-//     // 2.Call the service
-//     const result = await cserv.getCuratedCountByUser(user_id);
-
-//     // 3.If no curation exists for that user
-//     if (result === 0) {
-//       return res.status(404).json({
-//         success: false,
-//         message: `No curated news found for user_id: ${user_id}`,
-//       });
-//     }
-
-//     // 4.Success
-//     return res.status(200).json({
-//       success: true,
-//       data: {
-//         user_id,
-//         curated_news_count: result,
-//       },
-//     });
-
-//   } catch (error: any) {
-//     console.error("Error fetching curated news count:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Failed to fetch curated news count.",
-//     });
-//   }
-// };
+    res.status(200).json({
+      success: true,
+      total_curations: curations.length,
+      data: curations,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to fetch curations.",
+    });
+  }
+};
