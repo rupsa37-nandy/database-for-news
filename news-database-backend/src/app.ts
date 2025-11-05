@@ -5,7 +5,7 @@ import swaggerUi from "swagger-ui-express";
 import curationRouter from "./routes/curationroute";
 import translationRouter from "./routes/translationroute";
 import uploadRouter from "./routes/imgUploadroute";
-import userRouter from "./routes/userRoute";
+import userRouter from "./routes/userroute";
 import { swaggerSpec } from "./config/swagger";
 
 const apps = express();

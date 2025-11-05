@@ -34,3 +34,9 @@ export const deleteUser = async (username: string) => {
   if (!user) throw new Error("User not found");
   return user;
 };
+
+// Get single user by username
+export const getUser = async (username: string) => {
+  const user = await User.findOne({ username }).select("-password"); // exclude password
+  return user;
+};

@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import * as userService from "../service/authService";
-import User from "../models/usermodel";
-import mongoose from "mongoose";
  
 // Register - create user
 export const registerUser = async (req: Request, res: Response) => {
@@ -48,7 +46,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     // Extract username from route params
-    const { username } = req.params;
+    const { username } = req.body;
 
     // Call service to delete user and return the deleted document
     const deletedUser = await userService.deleteUser(username);
@@ -78,7 +76,6 @@ export const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
-
 // Update user roles
 // export const updateUserRoles = async (req, res) => {
 //   try {
@@ -95,14 +92,26 @@ export const deleteUser = async (req: Request, res: Response) => {
 // };
 
 // Get single user
-// export const getUser = async (req: Request, res: Response) => {
-//   try {
-//     const user = await userService.getUser(req.params.username);
-//     res.status(200).json({ 
-//         success: true, 
-//         data: user 
-//     });
-//   } catch (error: any) {
-//     res.status(404).json({ success: false, message: error.message });
-//   }
-// };
+export const getUser = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.body;
+    const user = await userService.getUser(username);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: `User with username '${username}' not found.`,
+      });
+    }
+
+    res.status(200).json({ 
+      success: true, 
+      data: user 
+    });
+  } catch (error: any) {
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+};
